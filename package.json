@@ -25,20 +25,26 @@
     "url": "git+https://github.com/sakib412/robots-txt-editor.git"
   },
   "type": "module",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "sideEffects": false,
   "license": "MIT",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./validator": {
       "types": "./dist/validator.d.ts",
-      "import": "./dist/validator.js"
+      "import": "./dist/validator.js",
+      "default": "./dist/validator.js"
     }
   },
-  "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
     "build": "rslib build",
@@ -68,5 +74,9 @@
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.6",
     "@lezer/highlight": "^1.2.3"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.20.0"
 }
