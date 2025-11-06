@@ -13,7 +13,11 @@ export default defineConfig({
       bundle: true,
       dts: true,
       format: 'esm',
-      syntax: 'es2017'
+      syntax: 'es2017',
+      autoExternal: {
+        dependencies: false,
+        peerDependencies: true,
+      }
     },
   ],
   output: {

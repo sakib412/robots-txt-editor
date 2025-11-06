@@ -1,6 +1,26 @@
 {
   "name": "robots-txt-editor",
+  "description": "Robots txt editor for react",
   "version": "0.0.1",
+  "keywords": [
+    "robots.txt",
+    "robots txt",
+    "robots-text-editor"
+  ],
+  "author": {
+    "name": "Najmus Sakib",
+    "email": "nazmusakib412@gmail.com",
+    "url": "https://github.com/sakib412"
+  },
+  "homepage": "https://github.com/sakib412/robots-txt-editor#readme",
+  "bugs": {
+    "url": "https://github.com/sakib412/robots-txt-editor/issues",
+    "email": "nazmusakib412@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakib412/robots-txt-editor.git"
+  },
   "type": "module",
   "license": "MIT",
   "exports": {
@@ -21,7 +41,8 @@
     "build": "rslib build",
     "check": "biome check --write",
     "dev": "rslib build --watch",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.4",
@@ -32,8 +53,8 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "react": ">=16.9.0",
-    "react-dom": ">=16.9.0"
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0"
   },
   "private": false,
   "dependencies": {
