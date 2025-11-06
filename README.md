@@ -1,99 +1,210 @@
-# Robots.txt Editor
+# robots-txt-editor
 
-A React component for editing and validating `robots.txt` files using CodeMirror 6.
+> CodeMirror-based robots.txt editor with RFC 9309 validation for React
 
-## Features
+[![npm version](https://img.shields.io/npm/v/robots-txt-editor.svg)](https://www.npmjs.com/package/robots-txt-editor)
+[![npm downloads](https://img.shields.io/npm/dm/robots-txt-editor.svg)](https://www.npmjs.com/package/robots-txt-editor)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- Syntax highlighting for `robots.txt` files.
-- Real-time validation (RFC 9309-aware) with editor diagnostics.
-- Autocomplete suggestions for directives, user-agents and common paths.
-- Easy to drop into React apps; lightweight validator utilities included.
+A professional robots.txt editor component for React applications with real-time validation, syntax highlighting, and auto-completion.
 
-## Installation
+<!-- ![Demo](https://via.placeholder.com/800x400?text=Add+Screenshot+Here) -->
 
-Install from npm (or your preferred package manager):
+## ✨ Features
+
+- ✅ **Real-time validation** - RFC 9309 compliant
+- ✅ **Syntax highlighting** - Color-coded directives
+- ✅ **Auto-completion** - Press `Ctrl+Space` for suggestions
+- ✅ **Error detection** - Red squiggly lines for errors
+- ✅ **Warning detection** - Orange lines for warnings
+- ✅ **Line numbers** - Easy navigation
+- ✅ **TypeScript support** - Full type definitions
+- ✅ **Lightweight** - ~300KB bundled
+
+## 📦 Installation
 
 ```bash
 npm install robots-txt-editor
 # or
 pnpm add robots-txt-editor
+# or
+yarn add robots-txt-editor
 ```
 
-## Usage
-
-- The editor is the default export of the package.
-- Validator utilities are exported from the `validator` entry.
+## 🚀 Quick Start
 
 ```tsx
-import React from 'react';
+import { useState } from 'react';
 import RobotsTxtEditor from 'robots-txt-editor';
-import {
-  validateRobotsTxt,
-  RobotsTxtValidator,
-  formatValidationResults,
-} from 'robots-txt-editor/validator';
 
-const MyComponent = () => {
-  const handleChange = (value: string) => {
-    // handle editor value changes
-    console.log('content changed', value);
-  };
+function App() {
+  const [content, setContent] = useState(`User-agent: *
+Disallow: /admin/
+Allow: /admin/public
 
-  const handleValidation = (isValid: boolean) => {
-    // simple boolean indicating whether any errors were found
-    console.log('is valid:', isValid);
-  };
+Sitemap: https://example.com/sitemap.xml
+`);
+  
+  const [isValid, setIsValid] = useState(true);
 
-  // Using the standalone validator utility
-  const runValidation = (content: string) => {
-    const result = validateRobotsTxt(content);
-    console.log(formatValidationResults(result));
-    // result: { isValid, errors, warnings }
+  return (
+    <div>
+      <RobotsTxtEditor
+        initialValue={content}
+        onChange={setContent}
+        onValidation={setIsValid}
+        height="500px"
+      />
+      
+      <div>
+        {isValid ? '✅ Valid' : '❌ Has Errors'}
+      </div>
+    </div>
+  );
+}
+```
+
+## 📖 API Reference
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `initialValue` | `string` | `''` | Initial robots.txt content |
+| `onChange` | `(value: string) => void` | - | Called when content changes |
+| `onValidation` | `(isValid: boolean) => void` | - | Called when validation state changes |
+| `height` | `string` | `'600px'` | Editor height (CSS value) |
+| `readOnly` | `boolean` | `false` | Make editor read-only |
+
+### Example with All Props
+
+```tsx
+<RobotsTxtEditor
+  initialValue="User-agent: *\nDisallow: /admin/"
+  onChange={(value) => console.log(value)}
+  onValidation={(isValid) => console.log(isValid)}
+  height="400px"
+  readOnly={false}
+/>
+```
+
+## 🎨 Advanced Usage
+
+### With Save Functionality
+
+```tsx
+import { useState } from 'react';
+import RobotsTxtEditor from 'robots-txt-editor';
+
+function RobotsEditor() {
+  const [content, setContent] = useState('');
+  const [isValid, setIsValid] = useState(true);
+
+  const handleSave = async () => {
+    if (!isValid) {
+      alert('Please fix errors before saving');
+      return;
+    }
+
+    await fetch('/api/robots-txt', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    });
+    
+    alert('Saved!');
   };
 
   return (
-    <RobotsTxtEditor
-      initialValue={"User-agent: *\nDisallow: /admin/"}
-      onChange={handleChange}
-      onValidation={handleValidation}
-      height="400px"
-      readOnly={false}
-    />
+    <div>
+      <RobotsTxtEditor
+        initialValue={content}
+        onChange={setContent}
+        onValidation={setIsValid}
+        height="500px"
+      />
+      
+      <button onClick={handleSave} disabled={!isValid}>
+        Save
+      </button>
+    </div>
   );
-};
-
-export default MyComponent;
+}
 ```
 
-## API
+### Using the Validator Separately
 
-### `RobotsTxtEditor` (default export)
+```tsx
+import { validateRobotsTxt } from 'robots-txt-editor/validator';
 
-- Props:
-  - `initialValue?: string` — initial editor content (default: `''`).
-  - `onChange?: (value: string) => void` — called when editor content changes.
-  - `onValidation?: (isValid: boolean) => void` — called after validation runs; receives a boolean indicating whether the file has no errors.
-  - `height?: string` — CSS height for the editor container (default: `'600px'`).
-  - `readOnly?: boolean` — render editor read-only.
+const result = validateRobotsTxt('User-agent: *\nDisallow: /admin/');
 
-Notes: the editor provides inline diagnostics (errors/warnings) produced by the built-in validator.
+console.log(result.isValid); // true
+console.log(result.errors);  // []
+console.log(result.warnings); // []
+```
 
-### Validator utilities (`robots-txt-editor/validator`)
+## 🎯 Validation Rules (RFC 9309)
 
-The validator module exports the following:
+The editor validates according to the official [RFC 9309](https://datatracker.ietf.org/doc/html/rfc9309) standard:
 
-- `class RobotsTxtValidator` — full-featured validator you can instantiate and run `.validate(content)` on.
-- `function validateRobotsTxt(content: string): ValidationResult` — convenience function that creates a `RobotsTxtValidator` and returns a `ValidationResult`.
-- `function formatValidationResults(result: ValidationResult): string` — helper to format errors/warnings as a readable string.
+- ✅ Proper directive syntax
+- ✅ User-agent requirements
+- ✅ Path formatting
+- ✅ Sitemap URL validation
+- ✅ Special characters handling
+- ⚠️ Non-standard directives warnings
 
-ValidationResult shape:
+## ⌨️ Keyboard Shortcuts
 
-- `isValid: boolean` — true when no errors are present (warnings may still exist).
-- `errors: Array<{ line: number; message: string; severity: 'error' }>` — array of error objects.
-- `warnings: Array<{ line: number; message: string; severity: 'warning' }>` — array of warning objects.
+- `Ctrl+Space` - Trigger auto-completion
+- `Ctrl+Z` - Undo
+- `Ctrl+Y` / `Ctrl+Shift+Z` - Redo
+- `Ctrl+A` - Select all
+- `Ctrl+F` - Find
 
-The validator aims to follow RFC 9309 (Robots Exclusion Protocol) and emits errors/warnings consistent with that spec.
+## 🎨 Styling
 
-## License
+The editor uses CodeMirror 6 and can be customized via CSS:
 
-MIT License. See the `LICENSE` file for details.
+```css
+/* Custom theme example */
+.cm-editor {
+  font-family: 'Fira Code', monospace;
+  font-size: 16px;
+}
+
+.cm-gutters {
+  background-color: #f5f5f5;
+}
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+MIT © [Najmus Sakib](https://github.com/sakib412)
+
+## 🙏 Acknowledgments
+
+- Built with [CodeMirror 6](https://codemirror.net/)
+- Follows [RFC 9309](https://datatracker.ietf.org/doc/html/rfc9309) specification
+- Inspired by VS Code's editor experience
+
+## 📧 Support
+
+- 🐛 Report bugs: [GitHub Issues](https://github.com/sakib412/robots-txt-editor/issues)
+- 💬 Questions: [GitHub Discussions](https://github.com/sakib412/robots-txt-editor/discussions)
+- 📧 Email: nazmusakib412@gmail.com
+
+---
+
+Made with ❤️ by [Najmus Sakib](https://github.com/sakib412)
